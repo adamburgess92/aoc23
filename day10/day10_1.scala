@@ -55,77 +55,76 @@ def findS(input: List[List[String]]): Point = {
     Point(findRow(input, 0), findCol(input(findRow(input, 0)), 0))
 }
 
-case class Crawler(pos: Point, visited: List[Point], steps: Int, grid: List[List[String]]) {
+case class Crawler(pos: Point, visited: List[Point]) {
     // Points it already visited:
     val newVisited: List[Point] = visited :+ pos
 
-    val rowUp = pos.rowNum-1
-    val rowDown = pos.rowNum+1
-    val colLeft = pos.colNum-1
-    val colRight = pos.colNum+1
-    val rowMin = 0
-    val rowMax = grid.length-1
-    val colMin = 0
-    val colMax = grid(0).length-1
+    def getOptions(grid:List[List[String]]): List[Point] = {
+        val rowUp = pos.rowNum-1
+        val rowDown = pos.rowNum+1
+        val colLeft = pos.colNum-1
+        val colRight = pos.colNum+1
+        val rowMin = 0
+        val rowMax = grid.length-1
+        val colMin = 0
+        val colMax = grid(0).length-1
 
-    val upPossible = {
-        if (rowUp >= rowMin && rowUp <= rowMax) {
-            val symUp = grid(rowUp)(pos.colNum)
-            if (List("F", "7", "|").contains(symUp) && !visited.contains(Point(pos.rowNum-1, pos.colNum))) true else false
-        } else {
-            false
+        val upPossible = {
+            if (rowUp >= rowMin && rowUp <= rowMax) {
+                val symUp = grid(rowUp)(pos.colNum)
+                if (List("F", "7", "|").contains(symUp) && !visited.contains(Point(pos.rowNum-1, pos.colNum))) true else false
+            } else {
+                false
+            }
         }
-    }
-    val downPossible = {
-        if (rowDown >=rowMin && rowDown <= rowMax) {
-            val symDown = grid(rowDown)(pos.colNum)
-            if (List("J", "L", "|").contains(symDown) && !visited.contains(Point(pos.rowNum+1, pos.colNum))) true else false
-        } else {
-            false
+        val downPossible = {
+            if (rowDown >=rowMin && rowDown <= rowMax) {
+                val symDown = grid(rowDown)(pos.colNum)
+                if (List("J", "L", "|").contains(symDown) && !visited.contains(Point(pos.rowNum+1, pos.colNum))) true else false
+            } else {
+                false
+            }
         }
-    }
-    val leftPossible = {
-        if (colLeft >= colMin && colLeft <= colMax) {
-            val symLeft = grid(pos.rowNum)(colLeft)
-            if (List("F", "L", "-").contains(symLeft) && !visited.contains(Point(pos.rowNum, pos.colNum-1))) true else false
-        } else {
-            false
+        val leftPossible = {
+            if (colLeft >= colMin && colLeft <= colMax) {
+                val symLeft = grid(pos.rowNum)(colLeft)
+                if (List("F", "L", "-").contains(symLeft) && !visited.contains(Point(pos.rowNum, pos.colNum-1))) true else false
+            } else {
+                false
+            }
         }
-    }
-    val rightPossible = {
-        if (colRight >= colMin && colRight <= colMax) {
-            val symRight = grid(pos.rowNum)(colRight)
-            if (List("J", "7", "-").contains(symRight) && !visited.contains(Point(pos.rowNum, pos.colNum+1))) true else false
-        } else {
-            false
+        val rightPossible = {
+            if (colRight >= colMin && colRight <= colMax) {
+                val symRight = grid(pos.rowNum)(colRight)
+                if (List("J", "7", "-").contains(symRight) && !visited.contains(Point(pos.rowNum, pos.colNum+1))) true else false
+            } else {
+                false
+            }
         }
-    }
-
-    def getOptions: List[Point] = {
         var out = List[Point]()
-        if (upPossible) {
-            out = out :+ Point(pos.rowNum-1, pos.colNum)
+            if (upPossible) {
+                out = out :+ Point(pos.rowNum-1, pos.colNum)
+            }
+            if (downPossible) {
+                out = out :+ Point(pos.rowNum+1, pos.colNum)
+            }
+            if (leftPossible) {
+                out = out :+ Point(pos.rowNum, pos.colNum-1)
+            }
+            if (rightPossible) {
+                out = out :+ Point(pos.rowNum, pos.colNum+1)
+            }
+            out
         }
-        if (downPossible) {
-            out = out :+ Point(pos.rowNum+1, pos.colNum)
-        }
-        if (leftPossible) {
-            out = out :+ Point(pos.rowNum, pos.colNum-1)
-        }
-        if (rightPossible) {
-            out = out :+ Point(pos.rowNum, pos.colNum+1)
-        }
-        out
-    }
 
-    def takeStep: List[Crawler] = {
+    def takeStep(grid:List[List[String]]): List[Crawler] = {
         def inner(ops:List[Point], a:List[Crawler]): List[Crawler] = ops match {
             case h::t => {
-                inner(t, a:+Crawler(h, newVisited, steps+1, grid))
+                inner(t, a:+Crawler(h, newVisited))
             }
             case Nil => a
         }
-        val ops = getOptions
+        val ops = getOptions(grid)
         inner(ops, List[Crawler]())
     }
 }
@@ -139,7 +138,7 @@ def process(grid: List[List[String]]): Int = {
     val startLocation = findS(grid)
     println(s"Starting at $startLocation")
     // grid.foreach(println)
-    val startCrawler = Crawler(startLocation, List[Point](), 0, grid)
+    val startCrawler = Crawler(startLocation, List[Point]())
     val crawlers: List[Crawler] = List(startCrawler)
 
     // For each crawler: 
@@ -153,7 +152,7 @@ def process(grid: List[List[String]]): Int = {
             a
         } else {
 
-            val newCrawlers: List[Crawler] = crawlers.flatMap(_.takeStep)
+            val newCrawlers: List[Crawler] = crawlers.flatMap(_.takeStep(grid))
             inner(newCrawlers, a+1)
         }
     }
