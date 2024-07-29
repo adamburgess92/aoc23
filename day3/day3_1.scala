@@ -4,8 +4,8 @@ import scala.util.matching.Regex
 object DayThree {
     def main(args: Array[String]): Unit = {
         val data = readLinesDayThree("day3/data.txt")
-        data.foreach(println)
         val p = getNumberLocations(data)
+        // p.foreach(println)
         val atomised_grid = atomiseGrid(data)
         val res = getResultPartOne(atomised_grid, p)
         println(res)
@@ -19,22 +19,11 @@ def readLinesDayThree(path:String): List[String] = {
     return lines
 }
 
-def getIntInRow(s:String): List[String] = {
-    val num_pattern: Regex = """\d+""".r
-    val m = num_pattern.findAllIn(s).toList
-    m
-}
-
 def getNumberLocations(s: List[String]): List[Tuple3[Int, List[Int], List[Int]]] = {
     def inner(s: List[String], row_num: Int, a:List[Tuple3[Int, List[Int], List[Int]]]): List[Tuple3[Int, List[Int], List[Int]]] = s match {
-        case h::t => { // h is 467..114..
-            val ints: List[String] = getIntInRow(h) // [467, 114]
-            val starts: List[Int] = ints.map(h.indexOf(_))
-            val ls_starts: List[List[Int]] = starts.map(n => List(row_num, n))
-            val ends: List[Int] = ints.map(i => h.indexOf(i)+i.length)
-            val ls_ends: List[List[Int]] = ends.map(n => List(row_num, n))
-            // Make tuple
-            val tpl = ints.zip(ls_starts).zip(ls_ends).map({case ((a, b), c) => (a.toInt, b, c)})
+        case h::t => { // h looks like "467..114..""
+            val regex_pattern: Regex = """\d+""".r
+            val tpl = regex_pattern.findAllMatchIn(h).map(m => Tuple3(m.matched.toInt, List(row_num, m.start), List(row_num, m.end-1)))
             inner(t, row_num+1, a++tpl)
         }
         case Nil => a
@@ -52,7 +41,6 @@ def atomiseGrid(grid: List[String]): List[List[Char]] = {
     inner(grid, a)
 }
 
-
 def queryGrid(atomised_grid: List[List[Char]], row: Int, col:Int): Option[Char] = {
     try {
         Some(atomised_grid(row)(col))
@@ -61,11 +49,9 @@ def queryGrid(atomised_grid: List[List[Char]], row: Int, col:Int): Option[Char] 
     }
 }
 
-def isSpecialCharacter(c: Option[Char]): Boolean = {
-  c match {
+def isSpecialCharacter(c: Option[Char]): Boolean = c match {
     case Some(ch) => !(ch.isDigit || ch == '.')
     case None => false
-  }
 }
 
 def checkIfAdjacent(atomised_grid: List[List[Char]], number_location: Tuple3[Int, List[Int], List[Int]]): Int = {
@@ -74,7 +60,6 @@ def checkIfAdjacent(atomised_grid: List[List[Char]], number_location: Tuple3[Int
     val start_col = number_location._2.last
     val end_col = number_location._3.last
     val cols = (start_col to end_col).toList
-    // for (c <- cols) {println(c)}
     // Iterate: 
     def inner(row: Int, ls_cols: List[Int], a:Int): Int = ls_cols match {
         case h::t => { // h = 0
