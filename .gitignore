@@ -1,0 +1,10 @@
+*.md
+metals*
+*.jar
+*.json
+*.class
+*.tasty
+*.log
+*semanticdb
+project/target/*
+target/
