@@ -6,3 +6,5 @@ metals*
 *.tasty
 *.log
 *semanticdb
+project/target/*
+target/

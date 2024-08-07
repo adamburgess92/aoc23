@@ -3,10 +3,10 @@ package day9
 import scala.util.matching.Regex
 import utils.Utils
 
-object DayNine {
+object DayNinePartTwo {
     def main(args: Array[String]): Unit = {
         val data = Utils.readLines("day9/data.txt")
-        val res = processAllRows(data)
+        val res = processAllRows2(data)
         println(res)
         // val res = doTheThing(data(4))
         // println(res)
@@ -56,4 +56,3 @@ def processAllRows2(input:List[String]): Int = {
     }
     inner(input, List()).foldLeft(0)(_+_)
 }
-
