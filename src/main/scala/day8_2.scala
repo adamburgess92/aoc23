@@ -12,10 +12,8 @@ object DayEightPartTwo {
         val m = buildMap(data)
         val s = getStartLocs(m)
         val dists = getAllDists(steps, data, s)
-        val res = lcm(dists)
+        val res = lcm(dists.map(i => i.toLong))
         println(res)
-        // 2137669401 wrong
-        // 13289612809129 correct - LCM calc is wrong
     }
 }
 
@@ -74,18 +72,17 @@ def getAllDists(steps: List[String], data:List[String], startLocs: List[String])
     inner(startLocs, List())
 }
 
-
 // Function to compute the greatest common divisor (GCD) of two numbers
-def gcd(a: Int, b: Int): Int = {
+def gcd(a: Long, b: Long): Long = {
     if (b == 0) a else gcd(b, a % b)
 }
 
 // Function to compute the LCM of two numbers
-def lcm(a: Int, b: Int): Int = {
+def lcm(a: Long, b: Long): Long = {
     (a * b).abs / gcd(a, b)
 }
 
 // Function to compute the LCM of a list of numbers
-def lcm(nums: List[Int]): Int = {
+def lcm(nums: List[Long]): Long = {
     nums.reduce(lcm)  // Use reduce to fold the list with the lcm function
 }
