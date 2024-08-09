@@ -5,26 +5,27 @@ import utils.Utils
 
 object DayEightPartOne {
     def main(args: Array[String]):Unit = {
-        val stepsString: String = "LLRLLRLRLRRRLLRRRLRRLRLRLRLRLRLRRLRRRLRLLRRLRRLRRRLLRLLRRLLRRRLLLRLRRRLLLLRRRLLRRRLRRLRLLRLRLRRRLRRRLRRLRRLRRLRLLRRRLRRLRRRLLRRRLRLRRLLRRLLRLRLRRLRRLLRLLRRLRLLRRRLLRRRLRRLLRRLRRRLRLRRRLRRLLLRLLRLLRRRLRLRLRLRRLRRRLLLRRRLRRRLRRRLRRLRLRLRLRRRLRRLLRLRRRLRLRLRRLLLRRRR"
-        val steps = stepsToList(stepsString)
-        val data = Utils.readLines("day8/data.txt")
-        val res = traverseMap(steps, data)
-        println(res)
-
-        // Test case: 
-        // val stepsString:String = "LLR"
+        // val stepsString: String = "RL"
+        // // val stepsString: String = "LLRLLRLRLRRRLLRRRLRRLRLRLRLRLRLRRLRRRLRLLRRLRRLRRRLLRLLRRLLRRRLLLRLRRRLLLLRRRLLRRRLRRLRLLRLRLRRRLRRRLRRLRRLRRLRLLRRRLRRLRRRLLRRRLRLRRLLRRLLRLRLRRLRRLLRLLRRLRLLRRRLLRRRLRRLLRRLRRRLRLRRRLRRLLLRLLRLLRRRLRLRLRLRRLRRRLLLRRRLRRRLRRRLRRLRLRLRLRRRLRRLLRLRRRLRLRLRRLLLRRRR"
         // val steps = stepsToList(stepsString)
-        // val data: List[String] = List("AAA = (BBB, BBB)", "BBB = (AAA, ZZZ)", "ZZZ = (ZZZ, ZZZ)")
+        // val data = Utils.readLines("day8/test_data1.txt")
         // val res = traverseMap(steps, data)
         // println(res)
+
+        // Test case: 
+        val stepsString:String = "LLR"
+        val steps = stepsToList(stepsString)
+        val data: List[String] = List("AAA = (BBB, BBB)", "BBB = (AAA, ZZZ)", "ZZZ = (ZZZ, ZZZ)")
+        val res = traverseMap(steps, data)
+        println(res)
 
     }
 }
 
 def stringToTuple(input:String): (String, String, String) = {
-    val patSource: Regex = """^([A-Z]..)""".r
-    val patLeft: Regex = """\s*\(([A-Z]..)""".r
-    val patRight: Regex = """\s*([A-Z]..)\)""".r
+    val patSource: Regex = """^([A-Z0-9]..)""".r
+    val patLeft: Regex = """\s*\(([A-Z0-9]..)""".r
+    val patRight: Regex = """\s*([A-Z0-9]..)\)""".r
     val s = patSource.findFirstMatchIn(input).map(_.group(1)).getOrElse {""}
     val l = patLeft.findFirstMatchIn(input).map(_.group(1)).getOrElse {""}
     val r = patRight.findFirstMatchIn(input).map(_.group(1)).getOrElse {""}
@@ -36,7 +37,6 @@ def stepsToList(input:String): List[String] = {
 }
 
 def buildMap(input: List[String]): Map[String, Map[String, String]] = {
-    val m: Map[String, Map[String, String]] = Map("D" -> Map("L"->"", "R"->""))
     def inner(input: List[String], m: Map[String, Map[String, String]]): Map[String, Map[String, String]] = input match {
         case h::t => {
             val tp = stringToTuple(h)
@@ -44,6 +44,7 @@ def buildMap(input: List[String]): Map[String, Map[String, String]] = {
         }
         case Nil => m
     }
+    val m: Map[String, Map[String, String]] = Map("D" -> Map("L"->"", "R"->""))
     inner(input, m)
 }
 
