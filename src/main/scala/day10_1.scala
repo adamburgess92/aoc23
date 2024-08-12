@@ -63,22 +63,30 @@ def checkSurroundings(grid: List[List[Char]], rowNum: Int, colNum: Int): List[Po
     }
     val current = grid(rowNum)(colNum)
     val upValid: Option[Point] = {
-        if (List('|', 'J', 'L', 'S').contains(current) && List('|', 'F', '7', 'S').contains(grid(rowNum-1)(colNum))) {
+        if (rowNum-1<0) { 
+            None
+        } else if (List('|', 'J', 'L', 'S').contains(current) && List('|', 'F', '7', 'S').contains(grid(rowNum-1)(colNum))) {
             queryGrid(rowNum-1, colNum)
         } else None
     }
     val downValid: Option[Point] = {
-        if (List('|', 'F', '7', 'S').contains(current) && List('|', 'L', 'J', 'S').contains(grid(rowNum+1)(colNum))) {
+        if (rowNum+1>grid.length) {
+            None
+        } else if (List('|', 'F', '7', 'S').contains(current) && List('|', 'L', 'J', 'S').contains(grid(rowNum+1)(colNum))) {
             queryGrid(rowNum+1, colNum)
         } else None
     }
     val leftValid: Option[Point] = {
-        if (List('-', 'J', '7', 'S').contains(current) && List('-', 'L', 'F', 'S').contains(grid(rowNum)(colNum-1))) {
+        if (colNum-1<0) {
+            None
+        } else if (List('-', 'J', '7', 'S').contains(current) && List('-', 'L', 'F', 'S').contains(grid(rowNum)(colNum-1))) {
             queryGrid(rowNum, colNum-1)
         } else None
     }
     val rightValid: Option[Point] = {
-        if (List('-', 'L', 'F', 'S').contains(current) && List('-', 'J', '7', 'S').contains(grid(rowNum)(colNum+1))) {
+        if (colNum+1>grid(0).length) {
+            None
+        } else if (List('-', 'L', 'F', 'S').contains(current) && List('-', 'J', '7', 'S').contains(grid(rowNum)(colNum+1))) {
             queryGrid(rowNum, colNum+1)
         } else None
     }
@@ -89,11 +97,7 @@ def checkSurroundings(grid: List[List[Char]], rowNum: Int, colNum: Int): List[Po
 
 def traverseLoop(grid: List[List[Char]], startPoint: Point): List[Point] = {    
     def inner(currentPoint: Point, visitedPoints: List[Point]): List[Point] = {
-        // println("currentPoint")
-        // println(currentPoint)
         val adjacent = checkSurroundings(grid, currentPoint.rowNum, currentPoint.colNum)
-        // println("adjacent")
-        // adjacent.foreach(println)
         val nextPoint = adjacent.filter(!visitedPoints.contains(_)) // Filter out points already visited
         if (nextPoint.length==0) { // If nowhere left to visit, loop exhausted
             visitedPoints:+currentPoint
