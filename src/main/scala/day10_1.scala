@@ -1,19 +1,23 @@
-package day10
+package day10 
 
 import utils.Utils
 
 object DayTenPartOne {
     def main(args: Array[String]): Unit = {
-        val grid = makeGrid(Utils.readLines("day10/data.txt"))
-        val res = process(grid)
+        val data = Utils.readLines("day10/data.txt")
+        val grid = makeGrid(data)
+        val s = findS(grid)
+        val res = getFurthestDist(grid, s)
         println(res)
     }
 }
 
-def makeGrid(input: List[String]): List[List[String]] = {
-    def inner(ls: List[String], a: List[List[String]]): List[List[String]] = ls match {
+case class Point(rowNum: Int, colNum: Int)
+
+def makeGrid(input: List[String]): List[List[Char]] = {
+    def inner(ls: List[String], a: List[List[Char]]): List[List[Char]] = ls match {
         case h::t => {
-            val s = h.split("").toList
+            val s = h.toList
             inner(t, a:+s)
         }
         case Nil => a
@@ -22,12 +26,10 @@ def makeGrid(input: List[String]): List[List[String]] = {
     out.slice(1, out.length)
 }
 
-case class Point(rowNum: Int, colNum: Int)
-
-def findS(input: List[List[String]]): Point = {
-    def findRow(input: List[List[String]], r:Int): Int = input match {
+def findS(input: List[List[Char]]): Point = {
+    def findRow(input: List[List[Char]], r:Int): Int = input match {
         case h::t => {
-            if (h.contains("S")) {
+            if (h.contains('S')) {
                 r
             } else {
                 findRow(t, r+1)
@@ -37,9 +39,9 @@ def findS(input: List[List[String]]): Point = {
             9999
         }
     }
-    def findCol(input: List[String], c: Int): Int = input match {
+    def findCol(input: List[Char], c: Int): Int = input match {
         case h::t => {
-            if (h.contains("S")) {
+            if (h == 'S') {
                 c
             } else {
                 findCol(t, c+1)
@@ -50,109 +52,60 @@ def findS(input: List[List[String]]): Point = {
     Point(findRow(input, 0), findCol(input(findRow(input, 0)), 0))
 }
 
-case class Crawler(pos: Point, visited: List[Point]) {
-    // Points it already visited:
-    val newVisited: List[Point] = visited :+ pos
-
-    def getOptions(grid:List[List[String]]): List[Point] = {
-        val rowUp = pos.rowNum-1
-        val rowDown = pos.rowNum+1
-        val colLeft = pos.colNum-1
-        val colRight = pos.colNum+1
-        val rowMin = 0
-        val rowMax = grid.length-1
-        val colMin = 0
-        val colMax = grid(0).length-1
-
-        val upPossible = {
-            if (rowUp >= rowMin && rowUp <= rowMax) {
-                val symUp = grid(rowUp)(pos.colNum)
-                if (List("F", "7", "|").contains(symUp) && !visited.contains(Point(pos.rowNum-1, pos.colNum))) true else false
-            } else {
-                false
-            }
-        }
-        val downPossible = {
-            if (rowDown >=rowMin && rowDown <= rowMax) {
-                val symDown = grid(rowDown)(pos.colNum)
-                if (List("J", "L", "|").contains(symDown) && !visited.contains(Point(pos.rowNum+1, pos.colNum))) true else false
-            } else {
-                false
-            }
-        }
-        val leftPossible = {
-            if (colLeft >= colMin && colLeft <= colMax) {
-                val symLeft = grid(pos.rowNum)(colLeft)
-                if (List("F", "L", "-").contains(symLeft) && !visited.contains(Point(pos.rowNum, pos.colNum-1))) true else false
-            } else {
-                false
-            }
-        }
-        val rightPossible = {
-            if (colRight >= colMin && colRight <= colMax) {
-                val symRight = grid(pos.rowNum)(colRight)
-                if (List("J", "7", "-").contains(symRight) && !visited.contains(Point(pos.rowNum, pos.colNum+1))) true else false
-            } else {
-                false
-            }
-        }
-        var out = List[Point]()
-            if (upPossible) {
-                out = out :+ Point(pos.rowNum-1, pos.colNum)
-            }
-            if (downPossible) {
-                out = out :+ Point(pos.rowNum+1, pos.colNum)
-            }
-            if (leftPossible) {
-                out = out :+ Point(pos.rowNum, pos.colNum-1)
-            }
-            if (rightPossible) {
-                out = out :+ Point(pos.rowNum, pos.colNum+1)
-            }
-            out
-        }
-
-    def takeStep(grid:List[List[String]]): List[Crawler] = {
-        def inner(ops:List[Point], a:List[Crawler]): List[Crawler] = ops match {
-            case h::t => {
-                inner(t, a:+Crawler(h, newVisited))
-            }
-            case Nil => a
-        }
-        val ops = getOptions(grid)
-        inner(ops, List[Crawler]())
-    }
-}
-
-def samePoint(in: List[Point]): Boolean = in match {
-    case Nil => true
-    case h::t => t.forall(_ == h)
-}
-
-def process(grid: List[List[String]]): Int = {
-    val startLocation = findS(grid)
-    println(s"Starting at $startLocation")
-    // grid.foreach(println)
-    val startCrawler = Crawler(startLocation, List[Point]())
-    val crawlers: List[Crawler] = List(startCrawler)
-
-    // For each crawler: 
-        // if pos are all the same, and count>0, return count
-
-    def inner(crawlers:List[Crawler], a: Int): Int = {
-        val points: List[Point] = crawlers.map(_.pos)
-        if (a>0 && samePoint(points)) {
-            val finalPosition = crawlers(0).pos
-            println(s"Final point: $finalPosition")
-            a
+def checkSurroundings(grid: List[List[Char]], rowNum: Int, colNum: Int): List[Point] = {
+    // Return points that can actuall be travelled to: 
+    def queryGrid(rowNum: Int, colNum: Int): Option[Point] = {
+        if (rowNum>=0 && colNum>=0 && rowNum<grid.length && colNum<grid(0).length) {
+            Some(Point(rowNum, colNum))
         } else {
-
-            val newCrawlers: List[Crawler] = crawlers.flatMap(_.takeStep(grid))
-            inner(newCrawlers, a+1)
+            None
         }
     }
-    inner(crawlers, 0)
+    val current = grid(rowNum)(colNum)
+    val upValid: Option[Point] = {
+        if (List('|', 'J', 'L', 'S').contains(current) && List('|', 'F', '7', 'S').contains(grid(rowNum-1)(colNum))) {
+            queryGrid(rowNum-1, colNum)
+        } else None
+    }
+    val downValid: Option[Point] = {
+        if (List('|', 'F', '7', 'S').contains(current) && List('|', 'L', 'J', 'S').contains(grid(rowNum+1)(colNum))) {
+            queryGrid(rowNum+1, colNum)
+        } else None
+    }
+    val leftValid: Option[Point] = {
+        if (List('-', 'J', '7', 'S').contains(current) && List('-', 'L', 'F', 'S').contains(grid(rowNum)(colNum-1))) {
+            queryGrid(rowNum, colNum-1)
+        } else None
+    }
+    val rightValid: Option[Point] = {
+        if (List('-', 'L', 'F', 'S').contains(current) && List('-', 'J', '7', 'S').contains(grid(rowNum)(colNum+1))) {
+            queryGrid(rowNum, colNum+1)
+        } else None
+    }
+    val v: List[Option[Point]] = List(upValid, downValid, leftValid, rightValid)
+    v.flatten
+
 }
 
+def traverseLoop(grid: List[List[Char]], startPoint: Point): List[Point] = {    
+    def inner(currentPoint: Point, visitedPoints: List[Point]): List[Point] = {
+        // println("currentPoint")
+        // println(currentPoint)
+        val adjacent = checkSurroundings(grid, currentPoint.rowNum, currentPoint.colNum)
+        // println("adjacent")
+        // adjacent.foreach(println)
+        val nextPoint = adjacent.filter(!visitedPoints.contains(_)) // Filter out points already visited
+        if (nextPoint.length==0) { // If nowhere left to visit, loop exhausted
+            visitedPoints:+currentPoint
+        } else {
+            inner(nextPoint(0), visitedPoints:+currentPoint)
+        }
+    }
+    val visitedPointsInit: List[Point] = Nil
+    inner(startPoint, visitedPointsInit)
+}
 
-
+def getFurthestDist(grid: List[List[Char]], startPoint: Point): Int = {
+    val loopPoints = traverseLoop(grid, startPoint)
+    loopPoints.length/2
+}
