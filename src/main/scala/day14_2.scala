@@ -4,9 +4,9 @@ import utils.Utils
 
 object DayFourteenPartTwo {
     def main(args: Array[String]): Unit = {
-        val data = Utils.readLines("day14/data.txt")
+        val data = Utils.readLines("day14/test_data.txt")
         val grid = atomiseData(data)
-        nCycle(10000, grid)
+        nCycle(1000, grid)
     }
 }
 
@@ -17,13 +17,13 @@ def rotate(grid: List[List[Char]]): List[List[Char]] = {
 
 def cycle(grid: List[List[Char]]): List[List[Char]] = {
     // North: 
-    val n = exhaustMoveStones(grid, queryNorth)
+    val n = exhaustMoveStones(grid)
     // West
-    val w = exhaustMoveStones(rotate(n), queryNorth)
+    val w = exhaustMoveStones(rotate(n))
     // South
-    val s = exhaustMoveStones(rotate(w), queryNorth)
+    val s = exhaustMoveStones(rotate(w))
     // East
-    val e = exhaustMoveStones(rotate(s), queryNorth)
+    val e = exhaustMoveStones(rotate(s))
     rotate(e)
 }
 

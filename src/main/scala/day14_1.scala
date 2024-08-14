@@ -4,9 +4,9 @@ import utils.Utils
 
 object DayFourteenPartOne {
     def main(args: Array[String]): Unit = {
-        val data = Utils.readLines("day14/data.txt")
+        val data = Utils.readLines("day14/test_data.txt")
         val grid = atomiseData(data)
-        val tiltedGrid = exhaustMoveStones(grid, queryNorth)
+        val tiltedGrid = exhaustMoveStones(grid)
         val res = calcLoad(tiltedGrid)
         println(res)
     }
@@ -29,13 +29,12 @@ def queryNorth(grid: List[List[Char]], i: Int, j: Int): Option[Char] = {
     }
 }
 
-
-def movePossible(grid: List[List[Char]], i: Int, j:Int, f:(List[List[Char]], Int, Int)=>Option[Char]): Boolean = {
-    grid(i)(j)=='O' && f(grid, i, j).contains('.')
+def movePossible(grid: List[List[Char]], i: Int, j:Int): Boolean = {
+    grid(i)(j)=='O' && queryNorth(grid, i, j).contains('.')
 }
 
-def moveStone(grid: List[List[Char]], i: Int, j: Int, f:(List[List[Char]], Int, Int)=>Option[Char]): (List[List[Char]], Int) = {
-    val (newGrid, nMoved) = if (movePossible(grid, i, j, f)) {
+def moveStone(grid: List[List[Char]], i: Int, j: Int): (List[List[Char]], Int) = {
+    val (newGrid, nMoved) = if (movePossible(grid, i, j)) {
         val updatedRowAbove = grid(i-1).updated(j, 'O')
         val updatedRow = grid(i).updated(j, '.')
         (grid.updated(i-1, updatedRowAbove).updated(i, updatedRow), 1)
@@ -45,13 +44,13 @@ def moveStone(grid: List[List[Char]], i: Int, j: Int, f:(List[List[Char]], Int, 
     (newGrid, nMoved)
 }
 
-def moveAllStonesByOne(grid: List[List[Char]], f:(List[List[Char]], Int, Int)=>Option[Char]): (List[List[Char]], Int)= {
+def moveAllStonesByOne(grid: List[List[Char]]): (List[List[Char]], Int)= {
     val i = (0 to grid.length-1).toList
     val j = (0 to grid(0).length-1).toList
     val z = i.flatMap(x => j.map(y => (x, y)))
     def inner(z: List[(Int, Int)], g: List[List[Char]], nMoves:Int): (List[List[Char]], Int) = z match {
         case h::t => {
-            val (newGrid, nMoved) = moveStone(g, h._1, h._2, f)
+            val (newGrid, nMoved) = moveStone(g, h._1, h._2)
             inner(t, newGrid, nMoves+nMoved)
         }
         case Nil => (g, nMoves)
@@ -60,13 +59,13 @@ def moveAllStonesByOne(grid: List[List[Char]], f:(List[List[Char]], Int, Int)=>O
     (newGrid, nMoves)
 }
 
-def exhaustMoveStones(grid: List[List[Char]], f: (List[List[Char]], Int, Int)=>Option[Char]): List[List[Char]] = {
-    val (newGrid, nMoves) = moveAllStonesByOne(grid, f)
+def exhaustMoveStones(grid: List[List[Char]]): List[List[Char]] = {
+    val (newGrid, nMoves) = moveAllStonesByOne(grid)
     // println(s"Moved $nMoves stones")
     if (nMoves==0) {
         newGrid
     } else {
-        exhaustMoveStones(newGrid, f)
+        exhaustMoveStones(newGrid)
     }
 }
 
