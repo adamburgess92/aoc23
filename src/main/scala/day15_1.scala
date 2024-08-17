@@ -5,14 +5,15 @@ import utils.Utils
 object DayFifteenPartOne { 
     def main(args: Array[String]): Unit = {
         val data: String = Utils.readLines("day15/data.txt")(0) // Data is only one line
-        val l = strToList(data)
+        val l = dataToList(data)
         val res = score(l)
         println(res)
 
+        // println(algString("rn"))
     }
 }
 
-def strToList(s: String): List[String] = {
+def dataToList(s: String): List[String] = {
     s.split(",").toList
 }
 
