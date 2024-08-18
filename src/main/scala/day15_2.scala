@@ -1,7 +1,6 @@
 package day15
 
 import utils.Utils
-import scala.util.matching.Regex
 import scala.collection.mutable.LinkedHashMap
 
 object DayFifteenPartTwo { 
@@ -17,18 +16,12 @@ case class Instruction(label: String, box: Int, focalLength:Option[Int])
 def evalEntry(s: String): Instruction = {
     println(s)
     val splitString = s.split("[=-]").toList
-    // List("rn", "1")
-    // List("cm")
     val label: String = splitString(0)
     val focalLength: Option[Int] = splitString match {
         case List(_, l) => Some(l.toInt)
         case _ => None
     }
     val box = algString(label)
-    // println(s"label: $label")
-    // println(s"box: $box")
-    // println(s"focalLength: $focalLength")
-    // println(" ")
     Instruction(label, box, focalLength)
 }
 
@@ -42,8 +35,6 @@ def evalAllEntries(lsData: List[String]): List[Instruction] = {
 
 def processInstructions(instructions: List[Instruction]): Map[Int, LinkedHashMap[String, Int]] = {
     val boxes = (0 to 255).map(i => i -> LinkedHashMap.empty[String, Int]).toMap
-
-    boxes.keys
     def inner(instructions: List[Instruction], b: Map[Int, LinkedHashMap[String, Int]]): Map[Int, LinkedHashMap[String, Int]] = instructions match {
         case h::t => {
             val label = h.label
@@ -56,7 +47,6 @@ def processInstructions(instructions: List[Instruction]): Map[Int, LinkedHashMap
                 // Remove
                 val bUpdated = b.updated(box, b(box).-(label))
                 inner(t, bUpdated)
-
             }
         }
         case Nil => b
@@ -83,4 +73,3 @@ def solve(data: String): Int = {
     val boxes = processInstructions(instructions)
     getTotalFocusingPower(boxes)
 }
-
