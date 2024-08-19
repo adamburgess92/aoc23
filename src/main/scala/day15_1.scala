@@ -4,7 +4,7 @@ import utils.Utils
 
 object DayFifteenPartOne { 
     def main(args: Array[String]): Unit = {
-        val data: String = Utils.readLines("day15/data.txt")(0) // Data is only one line
+        val data: String = Utils.readLines("day15/test_data.txt")(0) // Data is only one line
         val l = dataToList(data)
         val res = score(l)
         println(res)

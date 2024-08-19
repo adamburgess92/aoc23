@@ -7,7 +7,7 @@ import scala.io.Source
 object DayThirteenPartTwo {
     def main(args: Array[String]): Unit = {
         // Actual
-        val blocks = readBlocks("day13/data.txt")
+        val blocks = readBlocks("day13/test_data.txt")
         val res = processAllBlocks(blocks, assertSmudgeMatch)
         println(res)
     }

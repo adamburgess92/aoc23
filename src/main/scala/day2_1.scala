@@ -6,7 +6,7 @@ import utils.Utils
 object DayTwoPartOne {
     def main(args: Array[String]): Unit = {
         // val data = readFile("day2/test_data.txt")
-        val data = Utils.readLines("day2/data.txt")
+        val data = Utils.readLines("day2/test_data.txt")
         val res = sumIds(data)
         println(res)        
     }

@@ -5,7 +5,7 @@ import utils.Utils
 
 object DaySevenPartOne {
     def main(args: Array[String]): Unit ={
-        val test_data = Utils.readLines("day7/data.txt")
+        val test_data = Utils.readLines("day7/test_data.txt")
         val games = loadGames(test_data)
         val s = ruleSort(games)
         val res = multiplier(s)

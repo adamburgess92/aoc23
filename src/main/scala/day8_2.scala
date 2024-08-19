@@ -8,7 +8,7 @@ object DayEightPartTwo {
         val stepsString: String = "LLRLLRLRLRRRLLRRRLRRLRLRLRLRLRLRRLRRRLRLLRRLRRLRRRLLRLLRRLLRRRLLLRLRRRLLLLRRRLLRRRLRRLRLLRLRLRRRLRRRLRRLRRLRRLRLLRRRLRRLRRRLLRRRLRLRRLLRRLLRLRLRRLRRLLRLLRRLRLLRRRLLRRRLRRLLRRLRRRLRLRRRLRRLLLRLLRLLRRRLRLRLRLRRLRRRLLLRRRLRRRLRRRLRRLRLRLRLRRRLRRLLRLRRRLRLRLRRLLLRRRR"
         // val stepsString: String = "LR"
         val steps = stepsToList(stepsString)
-        val data = Utils.readLines("day8/data.txt")
+        val data = Utils.readLines("day8/test_data.txt")
         val m = buildMap(data)
         val s = getStartLocs(m)
         val dists = getAllDists(steps, data, s)
