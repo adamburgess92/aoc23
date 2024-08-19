@@ -4,7 +4,7 @@ import utils.Utils
 
 object DayElevenPartTwo {
     def main(args: Array[String]): Unit = {
-        val data = Utils.readLines("day11/data.txt")
+        val data = Utils.readLines("day11/test_data.txt")
         val datac = charRows(data)
         // datac.foreach(println)
         val r = rowEmpties(datac)

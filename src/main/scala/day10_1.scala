@@ -4,7 +4,7 @@ import utils.Utils
 
 object DayTenPartOne {
     def main(args: Array[String]): Unit = {
-        val data = Utils.readLines("day10/data.txt")
+        val data = Utils.readLines("day10/test_data.txt")
         val grid = makeGrid(data)
         val s = findS(grid)
         val res = getFurthestDist(grid, s)

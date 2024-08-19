@@ -10,7 +10,7 @@ object DayFourPartOne {
         // val winners = getWinners(test_case)
         // val res = calcWin(winners, draw)
 
-        val in = Utils.readLines("day4/data.txt")
+        val in = Utils.readLines("day4/test_data.txt")
         val res = processAllLines(in)
         println(res)
     }
