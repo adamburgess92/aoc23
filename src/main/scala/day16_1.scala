@@ -7,7 +7,7 @@ object DaySixteenPartOne {
         val data = Utils.readLines("day16/test_data.txt")
         data.foreach(println)
         val grid = atomiseData(data)
-        val beams = getBeams(grid)
+        val beams = getBeams(Beam(Point(0, 0), 'R'), grid)
         val res = getNumVisitedPoint(beams)
         println(s"Num visited points: $res")
     }
@@ -72,21 +72,16 @@ def step(current: List[Beam], visited: List[Beam], grid: List[List[Char]]): (Lis
     (next, visited++current)
 }
 
-def getBeams(grid: List[List[Char]]): List[Beam] = {
+def getBeams(startBeam: Beam, grid: List[List[Char]]): List[Beam] = {
     def inner(current: List[Beam], visited: List[Beam]): List[Beam] = {
         if (current.length==0) {
             visited
         } else {
-            val len_v = visited.length
-            println(s"visited.length = $len_v")
             val (next, newVisited) = step(current, visited, grid)
             inner(next, newVisited)
         }
     }
-    val initPoint = Point(0, 0)
-    val initDir = 'R'
-    val initBeam = Beam(initPoint, initDir)
-    inner(List(initBeam), Nil)
+    inner(List(startBeam), Nil)
 }
 
 def getNumVisitedPoint(lsBeams: List[Beam]): Int = {
